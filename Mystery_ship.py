@@ -4,8 +4,8 @@ from Config import *
 
 class MysteryShip:
     def __init__(self):
-        self.sprite = pygame.image.load(SPRITE_DIRECTORY + MYSTERY_SHIP_SPRITE_NAME)
-        self.explosion_sprite = pygame.image.load(SPRITE_DIRECTORY + MYSTERY_SHIP_EXPLOSION_SPRITE_NAME)
+        self.sprite = pygame.image.load(SPRITE_DIRECTORY + MYSTERY_SHIP_SPRITE)
+        self.explosion_sprite = pygame.image.load(SPRITE_DIRECTORY + MYSTERY_SHIP_EXPLOSION_SPRITE)
         self.rect = self.sprite.get_rect()
         self.moving_direction = None
         self.move_amount = 0

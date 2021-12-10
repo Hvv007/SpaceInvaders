@@ -1,10 +1,10 @@
 import pygame
-from Config import SPRITE_DIRECTORY, BUNKER_SPRITE_NAME, BUNKER_POSITIONS
+from Config import SPRITE_DIRECTORY, BUNKER_SPRITE, BUNKER_POSITIONS
 
 
 class Bunker:
     def __init__(self, center):
-        self.sprite = pygame.image.load(SPRITE_DIRECTORY + BUNKER_SPRITE_NAME)
+        self.sprite = pygame.image.load(SPRITE_DIRECTORY + BUNKER_SPRITE)
         self.rect = self.sprite.get_rect(center=center)
         self.mask = pygame.mask.from_threshold(self.sprite, (0, 0, 0, 0), (1, 1, 1, 255))
         self.mask.invert()

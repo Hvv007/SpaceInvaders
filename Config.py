@@ -13,7 +13,7 @@ DRAW_PERIOD_MS = 5
 
 SPRITE_DIRECTORY = "sprite/"
 
-BUNKER_SPRITE_NAME = "bunker.png"
+BUNKER_SPRITE = "bunker.png"
 BUNKER_POSITIONS = [
     ((GAME_SPACE[0] // 18) + (GAME_SPACE[0] // 9 * 1), GAME_SPACE[1] * 8 // 10),
     ((GAME_SPACE[0] // 18) + (GAME_SPACE[0] // 9 * 3), GAME_SPACE[1] * 8 // 10),
@@ -45,7 +45,7 @@ INVADER_SPRITES = [
     ["invader2_frame1.png", "invader2_frame2.png"],
     ["invader3_frame1.png", "invader3_frame2.png"]
 ]
-INVADER_EXPLOSION_SPRITE_NAME = "invader_explosion.png"
+INVADER_EXPLOSION_SPRITE = "invader_explosion.png"
 INVADER_FORMATION = [
     [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
     [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
@@ -60,8 +60,8 @@ INVADER_SPRITE_SHIFT_PERIOD_MS = 500
 INVADER_STARTING_POS_Y = GAME_SPACE[1] * 3 // 10
 INVADER_EXPLOSION_DURATION_MS = 250
 
-MYSTERY_SHIP_SPRITE_NAME = "mystery_ship.png"
-MYSTERY_SHIP_EXPLOSION_SPRITE_NAME = "mystery_ship_explosion.png"
+MYSTERY_SHIP_SPRITE = "mystery_ship.png"
+MYSTERY_SHIP_EXPLOSION_SPRITE = "mystery_ship_explosion.png"
 MYSTERY_SHIP_SPEED_PIXEL_PER_SECOND = 100
 MYSTERY_SHIP_STARTING_POS_Y = GAME_SPACE[1] * 2 // 10
 MYSTERY_SHIP_APPEAR_PERIOD_SECONDS = 30
@@ -75,3 +75,10 @@ LASER_SPRITES = [
 LASER_EXPLOSION_SPRITE = "laser_explosion.png"
 LASER_RECT_DIM = (2, 12)
 LASER_SPEED_PIXEL_PER_SECOND = 100
+
+SCORE_SPRITE = "score.png"
+HIGH_SCORE_SPRITE = "high_score.png"
+SCORE_DIGIT_COUNT = 5
+SCORE_BETWEEN_DIGIT_SPACE_PIXELS = 4
+SCORE_POS = (GAME_SPACE[0] // 10, GAME_SPACE[1] // 10)
+HIGH_SCORE_POS = (GAME_SPACE[0] // 10 * 5, GAME_SPACE[1] // 10)

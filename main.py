@@ -6,7 +6,7 @@ from Config import *
 from Invaders import Invaders
 from Bunkers import Bunkers
 from Spaceship import Spaceship
-from GUI import LifeCounter
+from GUI import LifeCounter, Score
 
 
 class SpaceInvaders:
@@ -19,6 +19,8 @@ class SpaceInvaders:
         self.game_over_flag = False
         self.update_time_delay = 1
         self.draw_time_delay = 1
+        self.score = Score('score')
+        self.high_score = Score('high_score')
 
     def play(self):
         clock = pygame.time.Clock()
@@ -35,6 +37,8 @@ class SpaceInvaders:
 
     def game_over(self):
         self.game_over_flag = True
+        if self.score.value > self.high_score.value:
+            self.high_score.value = self.score.value
 
     def reset(self):
         self.player_ship = Spaceship()
@@ -42,6 +46,7 @@ class SpaceInvaders:
         self.bunkers = Bunkers()
         self.life_counter = LifeCounter()
         self.game_over_flag = False
+        self.score = Score('score')
 
     def update(self, dt):
         events = self.get_inputs()
@@ -67,6 +72,8 @@ class SpaceInvaders:
         self.player_ship.draw(self.window)
         self.invaders.draw(self.window)
         self.life_counter.draw(self.window)
+        self.score.draw(self.window)
+        self.high_score.draw(self.window)
         pygame.display.flip()
 
     def update_life_count(self):
@@ -107,6 +114,7 @@ class SpaceInvaders:
             if missile_rect.colliderect(invader.rect):
                 invader.explode()
                 self.player_ship.missile.is_active = False
+                self.score.value += invader.invader_type * 10
 
     def collide_missile_and_mystery_ship(self):
         if not self.player_ship.missile.is_active or not self.invaders.mystery_ship.is_active:
@@ -116,6 +124,7 @@ class SpaceInvaders:
         if missile_rect.colliderect(mystery_ship_rect):
             self.invaders.mystery_ship.explode()
             self.player_ship.missile.is_active = False
+            self.score.value += 100
 
     def collide_spaceship_and_invaders(self):
         for invader in self.invaders:

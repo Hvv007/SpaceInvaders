@@ -15,3 +15,29 @@ class LifeCounter:
         for life in range(self.life_count):
             surf.blit(self.life_sprite, rect)
             rect.left, rect.top = (rect.left + LIFE_POS_SHIFT[0] + rect.w, rect.top + LIFE_POS_SHIFT[1])
+
+
+class Score:
+    def __init__(self, score_type):
+        self.value = 0
+        self.digit_sprites = [pygame.image.load(SPRITE_DIRECTORY + str(i) + ".png") for i in range(10)]
+        if score_type == 'score':
+            self.score_sprite = pygame.image.load(SPRITE_DIRECTORY + SCORE_SPRITE)
+            self.score_position = SCORE_POS
+        else:
+            self.score_sprite = pygame.image.load(SPRITE_DIRECTORY + HIGH_SCORE_SPRITE)
+            self.score_position = HIGH_SCORE_POS
+
+    def draw(self, surf: pygame.Surface):
+        score_string = str(self.value)
+        while len(score_string) < SCORE_DIGIT_COUNT:
+            score_string = '0' + score_string
+        score_x, score_y = self.score_position
+        offset = SCORE_BETWEEN_DIGIT_SPACE_PIXELS
+        digit_rect = self.digit_sprites[0].get_rect()
+        digit_rect.x, digit_rect.y = score_x, score_y - (digit_rect.h * 2)
+        surf.blit(self.score_sprite, digit_rect)
+        for digit in score_string:
+            digit_rect.x, digit_rect.y = score_x, score_y
+            surf.blit(self.digit_sprites[int(digit)], digit_rect)
+            score_x += digit_rect.w + offset

@@ -7,9 +7,9 @@ from Laser import Laser
 
 class Invader:
     def __init__(self, invader_type: int, top_left_pos):
-        self.invader_type = invader_type - 1
-        self.sprites = [pygame.image.load(SPRITE_DIRECTORY + s) for s in INVADER_SPRITES[self.invader_type]]
-        self.explosion_sprite = pygame.image.load(SPRITE_DIRECTORY + INVADER_EXPLOSION_SPRITE_NAME)
+        self.invader_type = invader_type
+        self.sprites = [pygame.image.load(SPRITE_DIRECTORY + s) for s in INVADER_SPRITES[self.invader_type - 1]]
+        self.explosion_sprite = pygame.image.load(SPRITE_DIRECTORY + INVADER_EXPLOSION_SPRITE)
         self.sprite_index = 0
         self.rect = self.sprites[self.sprite_index].get_rect(topleft=top_left_pos)
         self.last_sprite_shift_delay = 0
@@ -36,7 +36,7 @@ class Invader:
             self.last_sprite_shift_delay -= self.shift_sprite_period
 
     def fire(self):
-        return Laser((self.rect.centerx - (LASER_RECT_DIM[0] // 2), self.rect.bottom), self.invader_type)
+        return Laser((self.rect.centerx - (LASER_RECT_DIM[0] // 2), self.rect.bottom), self.invader_type - 1)
 
     def draw(self, surf: pygame.Surface):
         if self.is_exploded:
