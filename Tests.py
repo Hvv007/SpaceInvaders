@@ -8,6 +8,7 @@ from main import SpaceInvaders
 from Config import *
 
 pygame.init()
+pygame.mixer.init()
 game = SpaceInvaders()
 
 
