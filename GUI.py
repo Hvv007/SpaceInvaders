@@ -48,8 +48,10 @@ class Score:
 class GameOver:
     def __init__(self):
         self.game_over_sprite = pygame.image.load(SPRITE_DIRECTORY + GAME_OVER_SPRITE)
+        self.rect = pygame.rect
 
     def draw(self, surf: pygame.Surface):
         w, h = GAME_SPACE
         center = (w // 2, h // 2)
-        surf.blit(self.game_over_sprite, self.game_over_sprite.get_rect(center=center))
+        self.rect = self.game_over_sprite.get_rect(center=center)
+        surf.blit(self.game_over_sprite, self.rect)

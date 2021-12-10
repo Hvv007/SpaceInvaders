@@ -18,6 +18,7 @@ class Invader:
         self.delay_since_explosion = 0
         self.is_exploded = False
         self.destruction_sound = pygame.mixer.Sound(SOUND_DIRECTORY + INVADER_DESTRUCTION_SOUND)
+        self.sound_is_muted = False
 
     def update(self, dt, movement):
         if self.is_exploded:
@@ -49,7 +50,8 @@ class Invader:
 
     def explode(self):
         self.is_exploded = True
-        self.destruction_sound.play()
+        if not self.sound_is_muted:
+            self.destruction_sound.play()
 
 
 class Invaders:
@@ -69,6 +71,7 @@ class Invaders:
         self.mystery_ships_count = 0
         self.move_sounds = [pygame.mixer.Sound(SOUND_DIRECTORY + sound) for sound in INVADERS_MOVE_SOUNDS]
         self.move_sounds[0].play(loops=-1)
+        self.sound_is_muted = False
 
     def __iter__(self):
         return self.invaders_list.__iter__()
@@ -120,7 +123,11 @@ class Invaders:
         self.last_mystery_ship_appearing_delay = 0
         self.speed_up_level = 0
         self.mystery_ships_count = 0
-        self.move_sounds[0].play(loops=-1)
+        if not self.sound_is_muted:
+            self.move_sounds[0].play(loops=-1)
+        else:
+            for invader in self.invaders_list:
+                invader.sound_is_muted = self.sound_is_muted
 
     def fire(self, dt):
         self.last_firing_delay += dt
@@ -152,9 +159,11 @@ class Invaders:
 
     def speed_up(self):
         if len(self.invaders_list) <= self.starting_invaders_count // (2 ** (self.speed_up_level + 1)):
-            self.move_sounds[self.speed_up_level].stop()
+            if not self.sound_is_muted:
+                self.move_sounds[self.speed_up_level].stop()
+                self.move_sounds[self.speed_up_level+1].play(loops=-1)
             self.speed_up_level += 1
-            self.move_sounds[self.speed_up_level].play(loops=-1)
+
             self.movement_speed *= 2
             for invader in self.invaders_list:
                 invader.shift_sprite_period = invader.shift_sprite_period // 2

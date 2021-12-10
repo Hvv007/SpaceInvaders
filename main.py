@@ -22,6 +22,7 @@ class SpaceInvaders:
         self.score = Score('score')
         self.high_score = Score('high_score')
         self.game_over_screen = GameOver()
+        self.game_is_muted = False
 
     def play(self):
         clock = pygame.time.Clock()
@@ -52,15 +53,16 @@ class SpaceInvaders:
         self.life_counter = LifeCounter()
         self.game_over_flag = False
         self.score = Score('score')
+        self.mute_unmute()
 
     def update(self, dt):
-        events = self.get_inputs()
+        events = self.get_inputs(pygame.event.get())
         self.player_ship.update(dt, events)
         self.invaders.update(dt)
 
-    def get_inputs(self):
+    def get_inputs(self, input_events):
         events = []
-        for event in pygame.event.get():
+        for event in input_events:
             if event.type == pygame.QUIT:
                 sys.exit()
             if event.type == pygame.KEYDOWN:
@@ -68,8 +70,25 @@ class SpaceInvaders:
                     sys.exit()
                 if event.key == pygame.K_r:
                     self.reset()
+                if event.key == pygame.K_m:
+                    self.game_is_muted = not self.game_is_muted
+                    self.mute_unmute()
             events.append(event)
         return events
+
+    def mute_unmute(self):
+        self.player_ship.sound_is_muted = self.game_is_muted
+        self.invaders.sound_is_muted = self.game_is_muted
+        if self.game_is_muted:
+            self.invaders.move_sounds[self.invaders.speed_up_level].stop()
+            self.invaders.mystery_ship.move_sound.stop()
+        else:
+            self.invaders.move_sounds[self.invaders.speed_up_level].play()
+            if self.invaders.mystery_ship.is_active:
+                self.invaders.mystery_ship.move_sound.play(loops=-1)
+        for invader in self.invaders:
+            invader.sound_is_muted = self.game_is_muted
+        self.invaders.mystery_ship.sound_is_muted = self.game_is_muted
 
     def draw(self):
         self.window.fill((0, 0, 0))
@@ -85,7 +104,8 @@ class SpaceInvaders:
         if self.score.value // 1500 > self.life_counter.extra_lives_count:
             self.life_counter.life_count += 1
             self.life_counter.extra_lives_count += 1
-            self.life_counter.extra_life_sound.play()
+            if not self.game_is_muted:
+                self.life_counter.extra_life_sound.play()
         if not self.player_ship.is_active:
             if self.life_counter.life_count > 0:
                 self.life_counter.life_count -= 1

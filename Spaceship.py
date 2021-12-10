@@ -19,6 +19,7 @@ class Spaceship:
         self.invaders_killed = 0
         self.shoot_sound = pygame.mixer.Sound(SOUND_DIRECTORY + SPACESHIP_SHOOT_SOUND)
         self.destruction_sound = pygame.mixer.Sound(SOUND_DIRECTORY + SPACESHIP_DESTRUCTION_SOUND)
+        self.sound_is_muted = False
 
     def reset(self):
         self.rect = self.sprite.get_rect(center=SPACESHIP_STARTING_POSITION)
@@ -97,11 +98,13 @@ class Spaceship:
             return
         self.shots_count += 1
         self.launch_missile()
-        self.shoot_sound.play()
+        if not self.sound_is_muted:
+            self.shoot_sound.play()
 
     def destroy(self):
         self.is_destroyed = True
-        self.destruction_sound.play()
+        if not self.sound_is_muted:
+            self.destruction_sound.play()
 
     def launch_missile(self):
         missile_rect = pygame.Rect(self.rect.centerx - (MISSILE_RECT_DIM[0] // 2),
