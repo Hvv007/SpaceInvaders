@@ -21,7 +21,6 @@ class SpaceInvaders:
         self.draw_time_delay = 1
         self.score = Score('score')
         self.high_score = Score('high_score')
-        self.screen_count = 0
         self.game_over_screen = GameOver()
 
     def play(self):
@@ -36,7 +35,7 @@ class SpaceInvaders:
             if update_count > 0:
                 self.update(update_count * UPDATE_PERIOD_MS)
                 self.update_life_count()
-                self.collide()
+                self.check_collision()
             frame_count = self.get_frame_count(dt)
             if frame_count > 0:
                 self.draw()
@@ -86,6 +85,7 @@ class SpaceInvaders:
         if self.score.value // 1500 > self.life_counter.extra_lives_count:
             self.life_counter.life_count += 1
             self.life_counter.extra_lives_count += 1
+            self.life_counter.extra_life_sound.play()
         if not self.player_ship.is_active:
             if self.life_counter.life_count > 0:
                 self.life_counter.life_count -= 1
@@ -105,17 +105,17 @@ class SpaceInvaders:
         self.draw_time_delay = self.draw_time_delay % DRAW_PERIOD_MS
         return frame_count
 
-    def collide(self):
-        self.collide_missile_and_invaders()
-        self.collide_spaceship_and_invaders()
-        self.collide_spaceship_and_lasers()
-        self.collide_missile_and_lasers()
-        self.collide_missile_and_bunkers()
-        self.collide_laser_and_bunkers()
-        self.collide_invaders_and_bunkers()
-        self.collide_missile_and_mystery_ship()
+    def check_collision(self):
+        self.check_missile_and_invaders_collision()
+        self.check_spaceship_and_invaders_collision()
+        self.check_spaceship_and_lasers_collision()
+        self.check_missile_and_lasers_collision()
+        self.check_missile_and_bunkers_collision()
+        self.check_laser_and_bunkers_collision()
+        self.check_invaders_and_bunkers_collision()
+        self.check_missile_and_mystery_ship_collision()
 
-    def collide_missile_and_invaders(self):
+    def check_missile_and_invaders_collision(self):
         if not self.player_ship.missile.is_active:
             return
         missile_rect = self.player_ship.missile.rect
@@ -126,7 +126,7 @@ class SpaceInvaders:
                 self.score.value += invader.invader_type * 10
                 self.player_ship.invaders_killed += 1
 
-    def collide_missile_and_mystery_ship(self):
+    def check_missile_and_mystery_ship_collision(self):
         if not self.player_ship.missile.is_active or not self.invaders.mystery_ship.is_active:
             return
         missile_rect = self.player_ship.missile.rect
@@ -140,21 +140,21 @@ class SpaceInvaders:
             else:
                 self.score.value += 100
 
-    def collide_spaceship_and_invaders(self):
+    def check_spaceship_and_invaders_collision(self):
         for invader in self.invaders:
             if self.player_ship.is_destroyed:
                 return
             if invader.rect.colliderect(self.player_ship.rect):
                 self.player_ship.destroy()
 
-    def collide_spaceship_and_lasers(self):
+    def check_spaceship_and_lasers_collision(self):
         if self.player_ship.is_destroyed:
             return
         laser_rect_list = [laser.rect for laser in self.invaders.lasers]
         if self.player_ship.rect.collidelist(laser_rect_list) != - 1:
             self.player_ship.destroy()
 
-    def collide_missile_and_lasers(self):
+    def check_missile_and_lasers_collision(self):
         if not self.player_ship.missile.is_active:
             return
         laser_rect_list = [laser.rect for laser in self.invaders.lasers]
@@ -163,24 +163,24 @@ class SpaceInvaders:
             self.player_ship.missile.explode()
             self.invaders.lasers[laser_index].explode()
 
-    def collide_missile_and_bunkers(self):
+    def check_missile_and_bunkers_collision(self):
         if not self.player_ship.missile.is_active:
             return
-        if self.collide_with_bunkers(self.player_ship.missile, MISSILE_BUNKER_EXPLOSION_RADIUS):
+        if self.check_collision_with_bunkers(self.player_ship.missile, MISSILE_BUNKER_EXPLOSION_RADIUS):
             self.player_ship.missile.is_active = False
 
-    def collide_laser_and_bunkers(self):
+    def check_laser_and_bunkers_collision(self):
         for laser in self.invaders.lasers:
-            if self.collide_with_bunkers(laser, LASER_BUNKER_EXPLOSION_RADIUS):
+            if self.check_collision_with_bunkers(laser, LASER_BUNKER_EXPLOSION_RADIUS):
                 laser.explode()
 
-    def collide_invaders_and_bunkers(self):
+    def check_invaders_and_bunkers_collision(self):
         for invader in self.invaders:
-            self.collide_with_bunkers(invader, LASER_BUNKER_EXPLOSION_RADIUS)
+            self.check_collision_with_bunkers(invader, LASER_BUNKER_EXPLOSION_RADIUS)
 
-    def collide_with_bunkers(self, shoot, radius):
+    def check_collision_with_bunkers(self, colliding_entity, radius):
         for bunker in self.bunkers:
-            collision_point = self.find_colliding_point(shoot, bunker)
+            collision_point = self.find_colliding_point(colliding_entity, bunker)
             if collision_point:
                 self.apply_explosion_on_mask(collision_point, radius, bunker)
                 self.build_sprite_from_mask(bunker)

@@ -84,3 +84,21 @@ SCORE_POS = (GAME_SPACE[0] // 10, GAME_SPACE[1] // 10)
 HIGH_SCORE_POS = (GAME_SPACE[0] // 10 * 5, GAME_SPACE[1] // 10)
 
 GAME_OVER_SPRITE = "game_over.png"
+
+SOUND_DIRECTORY = "sound/"
+
+SPACESHIP_SHOOT_SOUND = "spaceship_shoot.wav"
+SPACESHIP_DESTRUCTION_SOUND = "spaceship_destroyed.wav"
+INVADER_DESTRUCTION_SOUND = "invader_destroyed.wav"
+INVADERS_MOVE_SOUNDS = [
+    "invader_movements1.wav",
+    "invader_movements2.wav",
+    "invader_movements3.wav",
+    "invader_movements4.wav",
+    "invader_movements5.wav",
+    "invader_movements6.wav"
+]
+
+MYSTERY_SHIP_SOUND = "mystery_ship.wav"
+MYSTERY_SHIP_DESTRUCTION_SOUND = "mystery_ship_destroyed.wav"
+EXTRA_LIFE_SOUND = "extra_life.wav"

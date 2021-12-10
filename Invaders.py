@@ -17,6 +17,7 @@ class Invader:
         self.move_amount = 0
         self.delay_since_explosion = 0
         self.is_exploded = False
+        self.destruction_sound = pygame.mixer.Sound(SOUND_DIRECTORY + INVADER_DESTRUCTION_SOUND)
 
     def update(self, dt, movement):
         if self.is_exploded:
@@ -48,6 +49,7 @@ class Invader:
 
     def explode(self):
         self.is_exploded = True
+        self.destruction_sound.play()
 
 
 class Invaders:
@@ -63,8 +65,10 @@ class Invaders:
         self.last_firing_delay = 0
         self.last_mystery_ship_appearing_delay = 0
         self.starting_invaders_count = len(self.invaders_list)
-        self.acceleration_level = 0
+        self.speed_up_level = 0
         self.mystery_ships_count = 0
+        self.move_sounds = [pygame.mixer.Sound(SOUND_DIRECTORY + sound) for sound in INVADERS_MOVE_SOUNDS]
+        self.move_sounds[0].play(loops=-1)
 
     def __iter__(self):
         return self.invaders_list.__iter__()
@@ -99,11 +103,12 @@ class Invaders:
 
     def update_invaders(self, dt):
         self.fire(dt)
-        self.accelerate()
+        self.speed_up()
         self.remove_invaders()
         self.update_invader(dt)
 
     def reset(self):
+        self.move_sounds[self.speed_up_level].stop()
         self.invaders_list = self.make_invaders_list()
         self.rect = self.get_rect()
         self.lasers = []
@@ -113,8 +118,9 @@ class Invaders:
         self.movement_speed = INVADER_SPEED_PIXEL_PER_SECOND
         self.last_firing_delay = 0
         self.last_mystery_ship_appearing_delay = 0
-        self.acceleration_level = 0
+        self.speed_up_level = 0
         self.mystery_ships_count = 0
+        self.move_sounds[0].play(loops=-1)
 
     def fire(self, dt):
         self.last_firing_delay += dt
@@ -144,9 +150,11 @@ class Invaders:
                 lowest_invaders.append(lowest_invader)
         return lowest_invaders
 
-    def accelerate(self):
-        if len(self.invaders_list) <= self.starting_invaders_count // (2 ** (self.acceleration_level + 1)):
-            self.acceleration_level += 1
+    def speed_up(self):
+        if len(self.invaders_list) <= self.starting_invaders_count // (2 ** (self.speed_up_level + 1)):
+            self.move_sounds[self.speed_up_level].stop()
+            self.speed_up_level += 1
+            self.move_sounds[self.speed_up_level].play(loops=-1)
             self.movement_speed *= 2
             for invader in self.invaders_list:
                 invader.shift_sprite_period = invader.shift_sprite_period // 2
