@@ -1,6 +1,6 @@
 import os
 os.environ["SDL_VIDEODRIVER"] = "dummy"
-
+os.environ['SDL_AUDIODRIVER'] = 'dsp'
 import unittest
 import pygame
 import random
