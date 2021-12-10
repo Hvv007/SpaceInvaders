@@ -46,11 +46,11 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        pytest Tests.py --doctest-modules --junitxml=junit/test-results.xml --cov=com --cov-report=xml --cov-report=html
+        pytest Tests.py
     - name: Check coverage
       # Здесь --cov=minesweeper выбирает директорию, для которой считать покрытие тестами
       run: |
-        pytest --cov=minesweeper
+        pytest Tests.py --cov=minesweeper --cov-report=html
       # Дополнительно можно запустить pytest --cov=minesweeper --cov-report html:cov_html
       # И научиться загружать отчёт из папки cov_html в артифакты workflow
       # В этом поможет пример из документации:
