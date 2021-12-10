@@ -15,6 +15,8 @@ class Spaceship:
         self.delay_since_explosion = 0
         self.is_firing = False
         self.missile = Missile()
+        self.shots_count = 0
+        self.invaders_killed = 0
 
     def reset(self):
         self.rect = self.sprite.get_rect(center=SPACESHIP_STARTING_POSITION)
@@ -91,6 +93,7 @@ class Spaceship:
     def fire(self):
         if not self.is_firing or self.missile.is_active:
             return
+        self.shots_count += 1
         self.launch_missile()
 
     def destroy(self):

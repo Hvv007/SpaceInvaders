@@ -64,6 +64,7 @@ class Invaders:
         self.last_mystery_ship_appearing_delay = 0
         self.starting_invaders_count = len(self.invaders_list)
         self.acceleration_level = 0
+        self.mystery_ships_count = 0
 
     def __iter__(self):
         return self.invaders_list.__iter__()
@@ -113,6 +114,7 @@ class Invaders:
         self.last_firing_delay = 0
         self.last_mystery_ship_appearing_delay = 0
         self.acceleration_level = 0
+        self.mystery_ships_count = 0
 
     def fire(self, dt):
         self.last_firing_delay += dt
@@ -191,7 +193,8 @@ class Invaders:
 
     def update_mystery_ship(self, dt):
         self.last_mystery_ship_appearing_delay += dt
-        if self.last_mystery_ship_appearing_delay > MYSTERY_SHIP_APPEAR_PERIOD_SECONDS * 1000:
+        if self.last_mystery_ship_appearing_delay > MYSTERY_SHIP_APPEAR_PERIOD_SECONDS * 1000 \
+                and len(self.invaders_list) > 7:
             self.last_mystery_ship_appearing_delay -= MYSTERY_SHIP_APPEAR_PERIOD_SECONDS * 1000
             self.launch_mystery_ship()
 
@@ -212,6 +215,7 @@ class Invaders:
         x = possible_x[index]
         y = MYSTERY_SHIP_STARTING_POS_Y
         direction = possible_direction[index]
+        self.mystery_ships_count += 1
         self.mystery_ship.launch((x, y), direction)
 
     @staticmethod

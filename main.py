@@ -6,7 +6,7 @@ from Config import *
 from Invaders import Invaders
 from Bunkers import Bunkers
 from Spaceship import Spaceship
-from GUI import LifeCounter, Score
+from GUI import LifeCounter, Score, GameOver
 
 
 class SpaceInvaders:
@@ -21,11 +21,17 @@ class SpaceInvaders:
         self.draw_time_delay = 1
         self.score = Score('score')
         self.high_score = Score('high_score')
+        self.screen_count = 0
+        self.game_over_screen = GameOver()
 
     def play(self):
         clock = pygame.time.Clock()
         while True:
             dt = clock.tick()
+            if self.game_over_flag:
+                self.draw_time_delay = 0
+                self.game_over_screen.draw(self.window)
+                pygame.display.flip()
             update_count = self.get_update_count(dt)
             if update_count > 0:
                 self.update(update_count * UPDATE_PERIOD_MS)
@@ -77,6 +83,9 @@ class SpaceInvaders:
         pygame.display.flip()
 
     def update_life_count(self):
+        if self.score.value // 1500 > self.life_counter.extra_lives_count:
+            self.life_counter.life_count += 1
+            self.life_counter.extra_lives_count += 1
         if not self.player_ship.is_active:
             if self.life_counter.life_count > 0:
                 self.life_counter.life_count -= 1
@@ -115,6 +124,7 @@ class SpaceInvaders:
                 invader.explode()
                 self.player_ship.missile.is_active = False
                 self.score.value += invader.invader_type * 10
+                self.player_ship.invaders_killed += 1
 
     def collide_missile_and_mystery_ship(self):
         if not self.player_ship.missile.is_active or not self.invaders.mystery_ship.is_active:
@@ -124,7 +134,11 @@ class SpaceInvaders:
         if missile_rect.colliderect(mystery_ship_rect):
             self.invaders.mystery_ship.explode()
             self.player_ship.missile.is_active = False
-            self.score.value += 100
+            if self.invaders.mystery_ships_count == 1 and self.player_ship.shots_count == 23 \
+                    or self.invaders.mystery_ships_count > 1 and (self.player_ship.shots_count - 23) % 15 == 0:
+                self.score.value += 300
+            else:
+                self.score.value += 100
 
     def collide_spaceship_and_invaders(self):
         for invader in self.invaders:
@@ -166,7 +180,6 @@ class SpaceInvaders:
 
     def collide_with_bunkers(self, shoot, radius):
         for bunker in self.bunkers:
-            # Find a colliding pixel
             collision_point = self.find_colliding_point(shoot, bunker)
             if collision_point:
                 self.apply_explosion_on_mask(collision_point, radius, bunker)
@@ -194,11 +207,9 @@ class SpaceInvaders:
             for y in range(collision_y - radius, collision_y + radius + 1, 1):
                 if x < 0 or x >= bunker.rect.w or y < 0 or y >= bunker.rect.h:
                     continue
-
                 # проверяем попадает ли в круг вокруг точки столкновения
                 if math.sqrt((x - collision_x) ** 2 + (y - collision_y) ** 2) > radius:
                     continue
-
                 # с какой-то вероятностью убираем пиксели
                 # попытался сделать похоже на оригинал, но ещё стоит поиграться с цифрами вероятности и радиуса
                 if random.random() < BUNKER_DESTRUCTION_PROBABILITY:

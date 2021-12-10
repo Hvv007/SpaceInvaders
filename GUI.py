@@ -7,6 +7,7 @@ class LifeCounter:
         self.life_count = STARTING_LIFE_COUNT
         self.life_sprite = pygame.image.load(SPRITE_DIRECTORY + SPACESHIP_SPRITE)
         self.digit_sprites = [pygame.image.load(SPRITE_DIRECTORY + str(i) + ".png") for i in range(10)]
+        self.extra_lives_count = 0
 
     def draw(self, surf: pygame.Surface):
         surf.blit(self.digit_sprites[self.life_count], pygame.Rect(LIFE_COUNT_POS, (0, 0)))
@@ -41,3 +42,13 @@ class Score:
             digit_rect.x, digit_rect.y = score_x, score_y
             surf.blit(self.digit_sprites[int(digit)], digit_rect)
             score_x += digit_rect.w + offset
+
+
+class GameOver:
+    def __init__(self):
+        self.game_over_sprite = pygame.image.load(SPRITE_DIRECTORY + GAME_OVER_SPRITE)
+
+    def draw(self, surf: pygame.Surface):
+        w, h = GAME_SPACE
+        center = (w // 2, h // 2)
+        surf.blit(self.game_over_sprite, self.game_over_sprite.get_rect(center=center))
