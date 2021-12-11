@@ -1,11 +1,12 @@
 import pygame
-from SpaceInvaders.Config import *
+import os
+from src.Config import *
 
 
 class Missile:
     def __init__(self):
         self.rect = None
-        self.explosion_sprite = pygame.image.load(SPRITE_DIRECTORY + MISSILE_EXPLOSION_SPRITE)
+        self.explosion_sprite = pygame.image.load(os.path.join(SPRITE_DIRECTORY, MISSILE_EXPLOSION_SPRITE))
         self.moving_direction = MovingDirection.UP
         self.move_amount = 0
         self.time_since_explosion = 0

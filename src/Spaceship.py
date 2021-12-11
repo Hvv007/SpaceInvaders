@@ -1,13 +1,14 @@
 import pygame
-from SpaceInvaders.Config import *
-from SpaceInvaders.Missile import Missile
+import os
+from src.Config import *
+from src.Missile import Missile
 
 
 class Spaceship:
     def __init__(self):
-        self.sprite = pygame.image.load(SPRITE_DIRECTORY + SPACESHIP_SPRITE)
+        self.sprite = pygame.image.load(os.path.join(SPRITE_DIRECTORY, SPACESHIP_SPRITE))
         self.rect = self.sprite.get_rect(center=SPACESHIP_STARTING_POSITION)
-        self.destruction_sprite = pygame.image.load(SPRITE_DIRECTORY + SPACESHIP_EXPLOSION_SPRITE)
+        self.destruction_sprite = pygame.image.load(os.path.join(SPRITE_DIRECTORY, SPACESHIP_EXPLOSION_SPRITE))
         self.moving_direction = MovingDirection.IDLE
         self.move_amount = 0
         self.is_active = True
@@ -17,8 +18,8 @@ class Spaceship:
         self.missile = Missile()
         self.shots_count = 0
         self.invaders_killed = 0
-        self.shoot_sound = pygame.mixer.Sound(SOUND_DIRECTORY + SPACESHIP_SHOOT_SOUND)
-        self.destruction_sound = pygame.mixer.Sound(SOUND_DIRECTORY + SPACESHIP_DESTRUCTION_SOUND)
+        self.shoot_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, SPACESHIP_SHOOT_SOUND))
+        self.destruction_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, SPACESHIP_DESTRUCTION_SOUND))
         self.sound_is_muted = False
 
     def reset(self):

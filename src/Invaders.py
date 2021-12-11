@@ -1,15 +1,16 @@
 import random
 import pygame
-from SpaceInvaders.Config import *
-from SpaceInvaders.Mystery_ship import MysteryShip
-from SpaceInvaders.Laser import Laser
+import os
+from src.Config import *
+from src.Mystery_ship import MysteryShip
+from src.Laser import Laser
 
 
 class Invader:
     def __init__(self, invader_type: int, top_left_pos):
         self.invader_type = invader_type
         self.sprites = [pygame.image.load(SPRITE_DIRECTORY + s) for s in INVADER_SPRITES[self.invader_type - 1]]
-        self.explosion_sprite = pygame.image.load(SPRITE_DIRECTORY + INVADER_EXPLOSION_SPRITE)
+        self.explosion_sprite = pygame.image.load(os.path.join(SPRITE_DIRECTORY, INVADER_EXPLOSION_SPRITE))
         self.sprite_index = 0
         self.rect = self.sprites[self.sprite_index].get_rect(topleft=top_left_pos)
         self.last_sprite_shift_delay = 0
@@ -17,7 +18,7 @@ class Invader:
         self.move_amount = 0
         self.delay_since_explosion = 0
         self.is_exploded = False
-        self.destruction_sound = pygame.mixer.Sound(SOUND_DIRECTORY + INVADER_DESTRUCTION_SOUND)
+        self.destruction_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, INVADER_DESTRUCTION_SOUND))
         self.sound_is_muted = False
 
     def update(self, dt, movement):

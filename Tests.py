@@ -1,11 +1,11 @@
-import os
-os.environ["SDL_VIDEODRIVER"] = "dummy"
-os.environ['SDL_AUDIODRIVER'] = 'dummy'
 import unittest
 import pygame
 import random
-from SpaceInvaders.main import SpaceInvaders
-from SpaceInvaders.Config import *
+from src.main import SpaceInvaders
+from src.Config import *
+import os
+os.environ["SDL_VIDEODRIVER"] = "dummy"
+os.environ['SDL_AUDIODRIVER'] = 'dummy'
 
 pygame.init()
 pygame.mixer.init()

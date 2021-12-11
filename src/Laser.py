@@ -1,10 +1,11 @@
 import pygame
-from SpaceInvaders.Config import *
+import os
+from src.Config import *
 
 
 class Laser:
     def __init__(self, top_left_pos, type_index: int):
-        self.explosion_sprite = pygame.image.load(SPRITE_DIRECTORY + LASER_EXPLOSION_SPRITE)
+        self.explosion_sprite = pygame.image.load(os.path.join(SPRITE_DIRECTORY, LASER_EXPLOSION_SPRITE))
         self.moving_direction = MovingDirection.DOWN
         self.move_amount = 0
         self.sprites = [pygame.image.load(SPRITE_DIRECTORY + s) for s in LASER_SPRITES[type_index]]

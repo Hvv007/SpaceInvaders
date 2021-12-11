@@ -1,5 +1,5 @@
 import pygame
-from SpaceInvaders.Config import SPRITE_DIRECTORY, BUNKER_SPRITE, BUNKER_POSITIONS
+from src.Config import SPRITE_DIRECTORY, BUNKER_SPRITE, BUNKER_POSITIONS
 
 
 class Bunker:

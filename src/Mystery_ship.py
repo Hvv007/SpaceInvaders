@@ -1,11 +1,12 @@
 import pygame
-from SpaceInvaders.Config import *
+import os
+from src.Config import *
 
 
 class MysteryShip:
     def __init__(self):
-        self.sprite = pygame.image.load(SPRITE_DIRECTORY + MYSTERY_SHIP_SPRITE)
-        self.explosion_sprite = pygame.image.load(SPRITE_DIRECTORY + MYSTERY_SHIP_EXPLOSION_SPRITE)
+        self.sprite = pygame.image.load(os.path.join(SPRITE_DIRECTORY, MYSTERY_SHIP_SPRITE))
+        self.explosion_sprite = pygame.image.load(os.path.join(SPRITE_DIRECTORY, MYSTERY_SHIP_EXPLOSION_SPRITE))
         self.rect = self.sprite.get_rect()
         self.moving_direction = None
         self.move_amount = 0
@@ -13,8 +14,8 @@ class MysteryShip:
         self.is_exploded = False
         self.time_since_explosion = 0
         self.explosion_duration = MYSTERY_SHIP_EXPLOSION_DURATION_MS
-        self.move_sound = pygame.mixer.Sound(SOUND_DIRECTORY + MYSTERY_SHIP_SOUND)
-        self.destruction_sound = pygame.mixer.Sound(SOUND_DIRECTORY + MYSTERY_SHIP_DESTRUCTION_SOUND)
+        self.move_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, MYSTERY_SHIP_SOUND))
+        self.destruction_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, MYSTERY_SHIP_DESTRUCTION_SOUND))
         self.sound_is_muted = False
 
     def launch(self, top_left_pos, direction: MovingDirection):
