@@ -30,7 +30,7 @@ jobs:
         pytest Tests.py
     - name: Check coverage
       run: |
-        pytest --cov=. --cov-report html:cov_html
+        pytest --cov=SpaceInvaders --cov-report html:cov_html
     - name: Upload pytest-cov test results
       uses: actions/upload-artifact@v2
       with:
