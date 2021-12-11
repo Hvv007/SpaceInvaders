@@ -2,11 +2,11 @@ import sys
 import pygame
 import math
 import random
-from Game.Config import *
-from Game.Invaders import Invaders
-from Game.Bunkers import Bunkers
-from Game.Spaceship import Spaceship
-from Game.GUI import LifeCounter, Score, GameOver
+from SpaceInvaders.Config import *
+from SpaceInvaders.Invaders import Invaders
+from SpaceInvaders.Bunkers import Bunkers
+from SpaceInvaders.Spaceship import Spaceship
+from SpaceInvaders.GUI import LifeCounter, Score, GameOver
 
 
 class SpaceInvaders:

@@ -1,5 +1,5 @@
 import pygame
-from Game.Config import *
+from SpaceInvaders.Config import *
 
 
 class MysteryShip:

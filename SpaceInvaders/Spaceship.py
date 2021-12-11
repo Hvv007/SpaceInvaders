@@ -1,6 +1,6 @@
 import pygame
-from Game.Config import *
-from Game.Missile import Missile
+from SpaceInvaders.Config import *
+from SpaceInvaders.Missile import Missile
 
 
 class Spaceship:
