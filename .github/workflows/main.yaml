@@ -27,10 +27,4 @@ jobs:
         pytest Tests.py
     - name: Check coverage
       run: |
-        pytest --cov=SpaceInvaders/src/ --cov-report html:cov_html
-    - name: Upload pytest-cov test results
-      uses: actions/upload-artifact@v2
-      with:
-        name: pytest-cov-results
-        path: cov_html
-      if: ${{ always() }}
+        python3 -m pytest --cov=src
