@@ -1,5 +1,5 @@
 import pygame
-from Config import *
+from Game.Config import *
 
 
 class Missile:

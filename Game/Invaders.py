@@ -1,8 +1,8 @@
 import random
 import pygame
-from Config import *
-from Mystery_ship import MysteryShip
-from Laser import Laser
+from Game.Config import *
+from Game.Mystery_ship import MysteryShip
+from Game.Laser import Laser
 
 
 class Invader:

@@ -4,8 +4,8 @@ os.environ['SDL_AUDIODRIVER'] = 'dummy'
 import unittest
 import pygame
 import random
-from main import SpaceInvaders
-from Config import *
+from Game.main import SpaceInvaders
+from Game.Config import *
 
 pygame.init()
 pygame.mixer.init()

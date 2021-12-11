@@ -1,5 +1,5 @@
 import pygame
-from Config import SPRITE_DIRECTORY, BUNKER_SPRITE, BUNKER_POSITIONS
+from Game.Config import SPRITE_DIRECTORY, BUNKER_SPRITE, BUNKER_POSITIONS
 
 
 class Bunker:
