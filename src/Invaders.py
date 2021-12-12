@@ -9,7 +9,7 @@ from src.Laser import Laser
 class Invader:
     def __init__(self, invader_type: int, top_left_pos):
         self.invader_type = invader_type
-        self.sprites = [pygame.image.load(SPRITE_DIRECTORY + s) for s in INVADER_SPRITES[self.invader_type - 1]]
+        self.sprites = [pygame.image.load(os.path.join(SPRITE_DIRECTORY + s)) for s in INVADER_SPRITES[self.invader_type - 1]]
         self.explosion_sprite = pygame.image.load(os.path.join(SPRITE_DIRECTORY, INVADER_EXPLOSION_SPRITE))
         self.sprite_index = 0
         self.rect = self.sprites[self.sprite_index].get_rect(topleft=top_left_pos)
