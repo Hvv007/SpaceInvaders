@@ -21,6 +21,9 @@ class Spaceship:
         self.shoot_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, SPACESHIP_SHOOT_SOUND))
         self.destruction_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, SPACESHIP_DESTRUCTION_SOUND))
         self.sound_is_muted = False
+        self.missile_firing = False
+        self.minigun_firing = False
+        self.launcher_firing = False
 
     def reset(self):
         self.rect = self.sprite.get_rect(center=SPACESHIP_STARTING_POSITION)
@@ -55,19 +58,41 @@ class Spaceship:
     def handle_input(self, events):
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
-                    self.moving_direction = MovingDirection.LEFT
-                if event.key == pygame.K_RIGHT:
-                    self.moving_direction = MovingDirection.RIGHT
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                    if self.moving_direction == MovingDirection.RIGHT:
+                        self.moving_direction = MovingDirection.IDLE
+                    else:
+                        self.moving_direction = MovingDirection.LEFT
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                    if self.moving_direction == MovingDirection.LEFT:
+                        self.moving_direction = MovingDirection.IDLE
+                    else:
+                        self.moving_direction = MovingDirection.RIGHT
                 if event.key == pygame.K_SPACE:
                     self.is_firing = True
+                    self.missile_firing = True
+                if event.key == pygame.K_LALT:
+                    self.is_firing = True
+                    self.launcher_firing = True
+                if event.key == pygame.K_LCTRL:
+                    self.is_firing = True
+                    self.minigun_firing = True
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT and self.moving_direction == MovingDirection.LEFT:
+                if (event.key == pygame.K_LEFT or event.key == pygame.K_a) \
+                        and self.moving_direction == MovingDirection.LEFT:
                     self.moving_direction = MovingDirection.IDLE
-                if event.key == pygame.K_RIGHT and self.moving_direction == MovingDirection.RIGHT:
+                if (event.key == pygame.K_RIGHT or event.key == pygame.K_d) \
+                        and self.moving_direction == MovingDirection.RIGHT:
                     self.moving_direction = MovingDirection.IDLE
                 if event.key == pygame.K_SPACE:
                     self.is_firing = False
+                    self.missile_firing = False
+                if event.key == pygame.K_LALT:
+                    self.is_firing = False
+                    self.launcher_firing = False
+                if event.key == pygame.K_LCTRL:
+                    self.is_firing = False
+                    self.minigun_firing = False
 
     def move(self, dt):
         if self.moving_direction == MovingDirection.IDLE:
@@ -86,11 +111,7 @@ class Spaceship:
     def update_missile(self, dt):
         if not self.missile.is_active:
             return
-        self.missile.update(dt)
-        if self.missile.rect.top < 0:
-            self.missile.rect.top = 0
-            self.missile.explode()
-
+        self.missile.update(dt, self.move_amount)
         if self.missile.time_since_explosion > INVADER_EXPLOSION_DURATION_MS:
             self.missile.set_inactive()
 
@@ -98,7 +119,12 @@ class Spaceship:
         if not self.is_firing or self.missile.is_active:
             return
         self.shots_count += 1
-        self.launch_missile()
+        if self.missile_firing:
+            self.launch_missile()
+        if self.launcher_firing:
+            self.launch_launcher()
+        if self.minigun_firing:
+            self.launch_minigun()
         if not self.sound_is_muted:
             self.shoot_sound.play()
 
@@ -112,4 +138,22 @@ class Spaceship:
                                    self.rect.top - MISSILE_RECT_DIM[1],
                                    MISSILE_RECT_DIM[0],
                                    MISSILE_RECT_DIM[1])
-        self.missile.launch(missile_rect)
+        self.missile.missile_type = 'default'
+        self.missile.launch(missile_rect, self.moving_direction)
+
+    def launch_launcher(self):
+        missile_rect = pygame.Rect(self.rect.centerx - (MISSILE_RECT_DIM[0] // 2),
+                                   self.rect.top - MISSILE_RECT_DIM[1],
+                                   MISSILE_RECT_DIM[0]*3,
+                                   MISSILE_RECT_DIM[1]*3)
+        self.missile.missile_type = 'launcher'
+        self.missile.launch(missile_rect, self.moving_direction)
+
+    def launch_minigun(self):
+        missile_rect = pygame.Rect(self.rect.centerx - (MISSILE_RECT_DIM[0] // 2),
+                                   self.rect.top - MISSILE_RECT_DIM[1],
+                                   MISSILE_RECT_DIM[0],
+                                   MISSILE_RECT_DIM[1])
+        self.missile.missile_type = 'minigun'
+        self.missile.launch(missile_rect, self.moving_direction)
+

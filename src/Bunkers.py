@@ -23,6 +23,3 @@ class Bunkers:
 
     def __iter__(self):
         return self.bunkers_list.__iter__()
-
-    def __next__(self):
-        return next(self.__iter__())

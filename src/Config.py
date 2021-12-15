@@ -6,6 +6,10 @@ class MovingDirection:
     IDLE = (0, 0)
 
 
+MISSILE_SPEED = {'default': 500,
+                 'launcher': 250,
+                 'minigun': 2500}
+
 WINDOW_SIZE = (400, 525)
 GAME_SPACE = (400, 500)
 UPDATE_PERIOD_MS = 5
@@ -39,6 +43,7 @@ MISSILE_EXPLOSION_SPRITE = "missile_explosion.png"
 MISSILE_RECT_DIM = (2, 6)
 MISSILE_RECT_COLOR = (0, 255, 0)
 MISSILE_SPEED_PIXEL_PER_SECOND = 500
+MINIGUN_MISSILE_SPEED_PIXEL_PER_SECOND = 1000
 
 INVADER_SPRITES = [
     ["invader1_frame1.png", "invader1_frame2.png"],

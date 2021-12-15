@@ -3,7 +3,8 @@ import random
 import pygame
 import pytest
 from src.Config import *
-from src.main import SpaceInvaders
+from main import SpaceInvaders
+from src.Spaceship import Spaceship
 
 os.environ["SDL_VIDEODRIVER"] = "dummy"
 os.environ['SDL_AUDIODRIVER'] = 'dummy'
@@ -14,6 +15,11 @@ pygame.mixer.init()
 @pytest.fixture
 def game():
     return SpaceInvaders()
+
+
+@pytest.fixture
+def spaceship():
+    return Spaceship()
 
 
 def test_starting_positions(game):
@@ -28,7 +34,7 @@ def test_starting_positions(game):
     assert game.game_over_screen.rect.center == (GAME_SPACE[0] // 2, GAME_SPACE[1] // 2)
 
 
-def test_inputs(game):
+def test_game_inputs(game):
     game.life_counter.life_count = -1
     game.get_inputs([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_r)])
     assert game.life_counter.life_count == STARTING_LIFE_COUNT
@@ -74,3 +80,16 @@ def test_reset(game):
     assert game.high_score.value == test_number
     assert test_invader.is_exploded != game.invaders.invaders_list[test_invader_number].is_exploded
     assert game.game_is_muted is True
+
+
+def test_spaceship_inputs(spaceship):
+    shots_before_input = spaceship.shots_count
+    start_x = spaceship.rect.x
+    spaceship.update(11, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE),
+                          pygame.event.Event(pygame.KEYDOWN, key=pygame.K_LEFT)])
+    assert spaceship.missile.is_active is True
+    assert spaceship.missile.move_amount == 0
+    assert spaceship.missile.moving_direction == MovingDirection.UP
+    assert spaceship.shots_count == shots_before_input + 1
+    assert spaceship.rect.x == start_x - 1
+    assert spaceship.moving_direction == MovingDirection.LEFT

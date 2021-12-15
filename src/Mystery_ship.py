@@ -17,6 +17,7 @@ class MysteryShip:
         self.move_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, MYSTERY_SHIP_SOUND))
         self.destruction_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, MYSTERY_SHIP_DESTRUCTION_SOUND))
         self.sound_is_muted = False
+        self.hp = 2
 
     def launch(self, top_left_pos, direction: MovingDirection):
         self.rect = self.sprite.get_rect(topleft=top_left_pos)

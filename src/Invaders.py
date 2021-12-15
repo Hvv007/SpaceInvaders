@@ -38,8 +38,9 @@ class Invader:
             self.sprite_index %= len(self.sprites)
             self.last_sprite_shift_delay -= self.shift_sprite_period
 
-    def fire(self):
-        return Laser((self.rect.centerx - (LASER_RECT_DIM[0] // 2), self.rect.bottom), self.invader_type - 1)
+    def fire(self, movement_direction, acceleration):
+        return Laser((self.rect.centerx - (LASER_RECT_DIM[0] // 2), self.rect.bottom),
+                     self.invader_type - 1, movement_direction, acceleration)
 
     def draw(self, surf: pygame.Surface):
         if self.is_exploded:
@@ -138,7 +139,7 @@ class Invaders:
             if not firing_invaders:
                 return
             invader = random.choice(firing_invaders)
-            self.lasers.append(invader.fire())
+            self.lasers.append(invader.fire(self.movement_direction, self.speed_up_level))
 
     def find_firing_invaders(self):
         invaders_columns = set(invader.rect.centerx for invader in self.invaders_list)
@@ -234,6 +235,7 @@ class Invaders:
         y = MYSTERY_SHIP_STARTING_POS_Y
         direction = possible_direction[index]
         self.mystery_ships_count += 1
+        self.mystery_ship.hp = 2
         self.mystery_ship.launch((x, y), direction)
 
     @staticmethod
