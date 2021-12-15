@@ -67,7 +67,7 @@ class Missile:
 
         if self.is_exploded:
             surf.blit(self.explosion_sprite,
-                      self.explosion_sprite.get_rect(center=(self.rect.center[0], self.rect.center[1]+10)))
+                      self.explosion_sprite.get_rect(center=self.rect.center))
         else:
             pygame.draw.rect(surf, MISSILE_RECT_COLOR, self.rect)
 
