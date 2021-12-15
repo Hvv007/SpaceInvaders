@@ -1,5 +1,6 @@
 import pygame
 import os
+import random
 from src.Config import *
 
 
@@ -44,8 +45,12 @@ class Missile:
             elif self.ship_direction == MovingDirection.RIGHT:
                 direction_x = 1
             self.rect.y += int(self.move_amount) * -1
-            self.rect.x += direction_x * ship_move_amount
+            if self.missile_type == 'minigun':
+                self.rect.x += ship_move_amount * random.randint(-10, 10)
+            else:
+                self.rect.x += direction_x * ship_move_amount
             self.move_amount -= int(self.move_amount)
+
         if self.rect.top < 0:
             self.rect.top = 0
             self.explode()

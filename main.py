@@ -24,8 +24,6 @@ class SpaceInvaders:
         self.game_over_screen = GameOver()
         self.game_is_muted = False
         self.cheats_flag = False
-        # for invader in self.invaders.invaders_list:
-        #     print(invader.rect.center)
 
     def play(self):
         clock = pygame.time.Clock()
@@ -249,13 +247,11 @@ class SpaceInvaders:
 
     @staticmethod
     def find_colliding_point(colliding_entity, bunker):
-        # получаем вектор растояния между левым верхним углом бункера и сталкивающемся объектом
         x, y = colliding_entity.rect.x, colliding_entity.rect.y
         offset = (x - bunker.rect.x, y - bunker.rect.y)
 
         w, h = (colliding_entity.rect.w, colliding_entity.rect.h)
         colliding_entity_mask = pygame.Mask((w, h), fill=True)
-        # возвращает точку пересечения, если есть
         return bunker.mask.overlap(colliding_entity_mask, offset)
 
     @staticmethod
@@ -267,11 +263,8 @@ class SpaceInvaders:
             for y in range(collision_y - radius, collision_y + radius + 1, 1):
                 if x < 0 or x >= bunker.rect.w or y < 0 or y >= bunker.rect.h:
                     continue
-                # проверяем попадает ли в круг вокруг точки столкновения
                 if math.sqrt((x - collision_x) ** 2 + (y - collision_y) ** 2) > radius:
                     continue
-                # с какой-то вероятностью убираем пиксели
-                # попытался сделать похоже на оригинал, но ещё стоит поиграться с цифрами вероятности и радиуса
                 if random.random() < BUNKER_DESTRUCTION_PROBABILITY:
                     bunker.mask.set_at((x, y), 0)
 
