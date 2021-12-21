@@ -1,5 +1,6 @@
 import pygame
 import os
+import time
 from src.Config import *
 from src.Missile import Missile
 
@@ -16,6 +17,7 @@ class Spaceship:
         self.delay_since_explosion = 0
         self.is_firing = False
         self.missile = Missile()
+        self.minigun_missiles = [Missile(), Missile(), Missile(), Missile()]
         self.shots_count = 0
         self.invaders_killed = 0
         self.shoot_sound = pygame.mixer.Sound(os.path.join(SOUND_DIRECTORY, SPACESHIP_SHOOT_SOUND))
@@ -53,6 +55,9 @@ class Spaceship:
                 surf.blit(self.destruction_sprite, self.rect)
             else:
                 surf.blit(self.sprite, self.rect)
+        for m in self.minigun_missiles:
+            if m.is_active:
+                m.draw(surf)
         if self.missile.is_active:
             self.missile.draw(surf)
 
@@ -75,20 +80,20 @@ class Spaceship:
                 self.acc *= 0.97
             if 0 > self.acc > -.1 or 0 < self.acc < .1:
                 self.acc = 0
-        if keys[pygame.K_SPACE]:
+        if keys[pygame.K_RCTRL]:
             self.is_firing = True
-            self.missile_firing = True
+            self.minigun_firing = True
+        if not keys[pygame.K_RCTRL]:
+            self.is_firing = False
+            self.minigun_firing = False
         for event in events:
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
+                if event.key == pygame.K_SPACE and not self.minigun_firing:
                     self.is_firing = True
                     self.missile_firing = True
-                if event.key == pygame.K_RALT:
+                if event.key == pygame.K_RALT and not self.minigun_firing:
                     self.is_firing = True
                     self.launcher_firing = True
-                if event.key == pygame.K_RCTRL:
-                    self.is_firing = True
-                    self.minigun_firing = True
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     self.is_firing = False
@@ -96,9 +101,6 @@ class Spaceship:
                 if event.key == pygame.K_RALT:
                     self.is_firing = False
                     self.launcher_firing = False
-                if event.key == pygame.K_RCTRL:
-                    self.is_firing = False
-                    self.minigun_firing = False
 
     def move(self, dt):
         self.move_amount += dt / 1000 * SPACESHIP_SPEED_PIXEL_PER_SECOND
@@ -112,6 +114,12 @@ class Spaceship:
                 self.rect.right = GAME_SPACE[0] - 1
 
     def update_missile(self, dt):
+        for m in self.minigun_missiles:
+            if not m.is_active:
+                continue
+            m.update(dt, self.acc)
+            if m.time_since_explosion > INVADER_EXPLOSION_DURATION_MS:
+                m.set_inactive()
         if not self.missile.is_active:
             return
         self.missile.update(dt, self.acc)
@@ -128,7 +136,7 @@ class Spaceship:
             self.launch_launcher()
         if self.minigun_firing:
             self.launch_minigun()
-        if not self.sound_is_muted:
+        if not self.sound_is_muted and not self.minigun_firing:
             self.shoot_sound.play()
 
     def destroy(self):
@@ -153,10 +161,13 @@ class Spaceship:
         self.missile.launch(missile_rect)
 
     def launch_minigun(self):
-        missile_rect = pygame.Rect(self.rect.centerx - (MISSILE_RECT_DIM[0] // 2),
-                                   self.rect.top - MISSILE_RECT_DIM[1],
-                                   MISSILE_RECT_DIM[0],
-                                   MISSILE_RECT_DIM[1])
-        self.missile.missile_type = 'minigun'
-        self.missile.launch(missile_rect)
-
+        for m in self.minigun_missiles:
+            if not m.is_active:
+                missile_rect = pygame.Rect(self.rect.centerx - (MISSILE_RECT_DIM[0] // 2),
+                                           self.rect.top - MISSILE_RECT_DIM[1],
+                                           MISSILE_RECT_DIM[0],
+                                           MISSILE_RECT_DIM[1])
+                m.missile_type = 'minigun'
+                m.launch(missile_rect)
+                if not self.sound_is_muted:
+                    self.shoot_sound.play()

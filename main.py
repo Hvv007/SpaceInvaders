@@ -173,45 +173,54 @@ class SpaceInvaders:
         self.check_missile_and_mystery_ship_collision()
 
     def check_missile_and_invaders_collision(self):
-        if not self.player_ship.missile.is_active:
+        active_missiles = [el for el in self.player_ship.minigun_missiles if el.is_active]
+        if not self.player_ship.missile.is_active and not any(active_missiles):
             return
         launcher_hit = []
-        missile_rect = self.player_ship.missile.rect
-        for invader in self.invaders:
-            if missile_rect.colliderect(invader.rect):
-                if self.player_ship.missile.missile_type == 'launcher':
-                    for invader_neighbour in self.invaders.invaders_list:
-                        if abs(invader.rect.center[0] - invader_neighbour.rect.center[0]) < 35 and \
-                                invader.rect.center[1] == invader_neighbour.rect.center[1] or \
-                                abs(invader.rect.center[1] - invader_neighbour.rect.center[1]) < 35 and \
-                                invader.rect.center[0] == invader_neighbour.rect.center[0]:
-                            launcher_hit.append(invader_neighbour)
-                    for inv in launcher_hit:
-                        inv.explode()
-                self.player_ship.missile.set_inactive()
-                invader.explode()
-                self.score.value += invader.invader_type * 10
-                self.player_ship.invaders_killed += 1
+        if self.player_ship.missile.is_active:
+            active_missiles.append(self.player_ship.missile)
+        for missile in active_missiles:
+            missile_rect = missile.rect
+            for invader in self.invaders:
+                if missile_rect.colliderect(invader.rect):
+                    if missile.missile_type == 'launcher':
+                        for invader_neighbour in self.invaders.invaders_list:
+                            if abs(invader.rect.center[0] - invader_neighbour.rect.center[0]) < 35 and \
+                                    invader.rect.center[1] == invader_neighbour.rect.center[1] or \
+                                    abs(invader.rect.center[1] - invader_neighbour.rect.center[1]) < 35 and \
+                                    invader.rect.center[0] == invader_neighbour.rect.center[0]:
+                                launcher_hit.append(invader_neighbour)
+                        for inv in launcher_hit:
+                            inv.explode()
+                    missile.set_inactive()
+                    invader.explode()
+                    self.score.value += invader.invader_type * 10
+                    self.player_ship.invaders_killed += 1
 
     def check_missile_and_mystery_ship_collision(self):
-        if not self.player_ship.missile.is_active or not self.invaders.mystery_ship.is_active:
+        active_missiles = [el for el in self.player_ship.minigun_missiles if el.is_active]
+        if (not self.player_ship.missile.is_active and not any(active_missiles)) \
+                or not self.invaders.mystery_ship.is_active:
             return
-        missile_rect = self.player_ship.missile.rect
-        mystery_ship_rect = self.invaders.mystery_ship.rect
-        if missile_rect.colliderect(mystery_ship_rect):
-            if self.player_ship.missile.missile_type == 'minigun':
-                self.invaders.mystery_ship.hp -= 1
-                self.player_ship.missile.explode()
-                self.player_ship.missile.draw(self.window)
-                self.player_ship.missile.set_inactive()
-            if self.invaders.mystery_ship.hp == 0 or self.player_ship.missile.missile_type != 'minigun':
-                self.invaders.mystery_ship.explode()
-                self.player_ship.missile.set_inactive()
-                if self.invaders.mystery_ships_count == 1 and self.player_ship.shots_count == 23 \
-                        or self.invaders.mystery_ships_count > 1 and (self.player_ship.shots_count - 23) % 15 == 0:
-                    self.score.value += 300
-                else:
-                    self.score.value += 100
+        if self.player_ship.missile.is_active:
+            active_missiles.append(self.player_ship.missile)
+        for missile in active_missiles:
+            missile_rect = missile.rect
+            mystery_ship_rect = self.invaders.mystery_ship.rect
+            if missile_rect.colliderect(mystery_ship_rect):
+                if missile.missile_type == 'minigun':
+                    self.invaders.mystery_ship.hp -= 1
+                    missile.explode()
+                    missile.draw(self.window)
+                    missile.set_inactive()
+                if self.invaders.mystery_ship.hp == 0 or missile.missile_type != 'minigun':
+                    self.invaders.mystery_ship.explode()
+                    missile.set_inactive()
+                    if self.invaders.mystery_ships_count == 1 and self.player_ship.shots_count == 23 \
+                            or self.invaders.mystery_ships_count > 1 and (self.player_ship.shots_count - 23) % 15 == 0:
+                        self.score.value += 300
+                    else:
+                        self.score.value += 100
 
     def check_spaceship_and_invaders_collision(self):
         for invader in self.invaders:
@@ -228,19 +237,27 @@ class SpaceInvaders:
             self.player_ship.destroy()
 
     def check_missile_and_lasers_collision(self):
-        if not self.player_ship.missile.is_active:
+        active_missiles = [el for el in self.player_ship.minigun_missiles if el.is_active]
+        if not self.player_ship.missile.is_active and not any(active_missiles):
             return
-        laser_rect_list = [laser.rect for laser in self.invaders.lasers]
-        laser_index = self.player_ship.missile.rect.collidelist(laser_rect_list)
-        if laser_index != -1:
-            self.player_ship.missile.explode()
-            self.invaders.lasers[laser_index].explode()
+        if self.player_ship.missile.is_active:
+            active_missiles.append(self.player_ship.missile)
+        for missile in active_missiles:
+            laser_rect_list = [laser.rect for laser in self.invaders.lasers]
+            laser_index = missile.rect.collidelist(laser_rect_list)
+            if laser_index != -1:
+                missile.explode()
+                self.invaders.lasers[laser_index].explode()
 
     def check_missile_and_bunkers_collision(self):
-        if not self.player_ship.missile.is_active:
+        active_missiles = [el for el in self.player_ship.minigun_missiles if el.is_active]
+        if not self.player_ship.missile.is_active and not any(active_missiles):
             return
-        if self.check_collision_with_bunkers(self.player_ship.missile, MISSILE_BUNKER_EXPLOSION_RADIUS):
-            self.player_ship.missile.set_inactive()
+        if self.player_ship.missile.is_active:
+            active_missiles.append(self.player_ship.missile)
+        for missile in active_missiles:
+            if self.check_collision_with_bunkers(missile, MISSILE_BUNKER_EXPLOSION_RADIUS):
+                missile.set_inactive()
 
     def check_laser_and_bunkers_collision(self):
         for laser in self.invaders.lasers:

@@ -42,7 +42,7 @@ class Missile:
         if self.move_amount > 1.:
             self.rect.y += int(self.move_amount) * -1
             if self.missile_type == 'minigun':
-                self.rect.x += max(self.ship_acc, 1) * random.randint(-10, 10)
+                self.rect.x += max(self.ship_acc, 1) * random.randint(-15, 15)
             else:
                 self.rect.x += int(self.move_amount) * self.ship_acc / 3
             self.move_amount -= int(self.move_amount)
