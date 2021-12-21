@@ -24,6 +24,8 @@ class SpaceInvaders:
         self.game_over_screen = GameOver()
         self.game_is_muted = False
         self.cheats_flag = False
+        self.cheats_on = [False]*3
+        self.cheats_off = [False]*3
 
     def play(self):
         clock = pygame.time.Clock()
@@ -63,13 +65,6 @@ class SpaceInvaders:
 
     def get_inputs(self, input_events):
         events = []
-        keys = pygame.key.get_pressed()
-        if keys[pygame.K_y] and keys[pygame.K_u] and keys[pygame.K_i]:
-            self.cheats_flag = True
-            print('cheats on')
-        if keys[pygame.K_h] and keys[pygame.K_j] and keys[pygame.K_k]:
-            self.cheats_flag = False
-            print('cheats off')
         for event in input_events:
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -81,6 +76,18 @@ class SpaceInvaders:
                 if event.key == pygame.K_m:
                     self.game_is_muted = not self.game_is_muted
                     self.mute_unmute()
+                if self.cheats_flag is False and event.key == pygame.K_y:
+                    self.cheats_on[0] = True
+                if self.cheats_flag is False and event.key == pygame.K_u:
+                    self.cheats_on[1] = True
+                if self.cheats_flag is False and event.key == pygame.K_i:
+                    self.cheats_on[2] = True
+                if self.cheats_flag is True and event.key == pygame.K_h:
+                    self.cheats_off[0] = True
+                if self.cheats_flag is True and event.key == pygame.K_j:
+                    self.cheats_off[1] = True
+                if self.cheats_flag is True and event.key == pygame.K_k:
+                    self.cheats_off[2] = True
                 if self.cheats_flag and event.key == pygame.K_EQUALS:
                     if self.life_counter.life_count < 9:
                         self.life_counter.life_count += 1
@@ -91,8 +98,14 @@ class SpaceInvaders:
                     for i in range(0, len(self.invaders.invaders_list), 2):
                         if not self.invaders.invaders_list[i].is_exploded:
                             self.invaders.invaders_list[i].explode()
-                if self.cheats_flag and event.key == pygame.K_9:
+                if self.cheats_flag and event.key == pygame.K_9 and not self.invaders.mystery_ship.is_active:
                     self.invaders.launch_mystery_ship()
+            if len([True for i in self.cheats_on if i is True]) == 3:
+                self.cheats_flag = True
+                self.cheats_on = [False]*3
+            if len([True for i in self.cheats_off if i is True]) == 3:
+                self.cheats_flag = False
+                self.cheats_off = [False]*3
             events.append(event)
         return events
 
@@ -112,6 +125,8 @@ class SpaceInvaders:
 
     def draw(self):
         self.window.fill((0, 0, 0))
+        if self.cheats_flag:
+            self.window.blit(self.score.digit_sprites[0], CHEATS_POS)
         self.bunkers.draw(self.window)
         self.player_ship.draw(self.window)
         self.invaders.draw(self.window)
@@ -123,7 +138,7 @@ class SpaceInvaders:
         pygame.display.flip()
 
     def update_life_count(self):
-        if self.score.value // 1500 > self.life_counter.extra_lives_count:
+        if self.score.value // 1500 > self.life_counter.extra_lives_count and self.life_counter.life_count < 9:
             self.life_counter.life_count += 1
             self.life_counter.extra_lives_count += 1
             if not self.game_is_muted:
@@ -173,7 +188,7 @@ class SpaceInvaders:
                             launcher_hit.append(invader_neighbour)
                     for inv in launcher_hit:
                         inv.explode()
-                self.player_ship.missile.is_active = False
+                self.player_ship.missile.set_inactive()
                 invader.explode()
                 self.score.value += invader.invader_type * 10
                 self.player_ship.invaders_killed += 1
@@ -188,10 +203,10 @@ class SpaceInvaders:
                 self.invaders.mystery_ship.hp -= 1
                 self.player_ship.missile.explode()
                 self.player_ship.missile.draw(self.window)
-                self.player_ship.missile.is_active = False
+                self.player_ship.missile.set_inactive()
             if self.invaders.mystery_ship.hp == 0 or self.player_ship.missile.missile_type != 'minigun':
                 self.invaders.mystery_ship.explode()
-                self.player_ship.missile.is_active = False
+                self.player_ship.missile.set_inactive()
                 if self.invaders.mystery_ships_count == 1 and self.player_ship.shots_count == 23 \
                         or self.invaders.mystery_ships_count > 1 and (self.player_ship.shots_count - 23) % 15 == 0:
                     self.score.value += 300
@@ -225,7 +240,7 @@ class SpaceInvaders:
         if not self.player_ship.missile.is_active:
             return
         if self.check_collision_with_bunkers(self.player_ship.missile, MISSILE_BUNKER_EXPLOSION_RADIUS):
-            self.player_ship.missile.is_active = False
+            self.player_ship.missile.set_inactive()
 
     def check_laser_and_bunkers_collision(self):
         for laser in self.invaders.lasers:

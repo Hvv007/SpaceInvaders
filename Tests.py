@@ -84,12 +84,21 @@ def test_reset(game):
 
 def test_spaceship_inputs(spaceship):
     shots_before_input = spaceship.shots_count
-    start_x = spaceship.rect.x
     spaceship.update(11, [pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE),
                           pygame.event.Event(pygame.KEYDOWN, key=pygame.K_LEFT)])
     assert spaceship.missile.is_active is True
     assert spaceship.missile.move_amount == 0
     assert spaceship.missile.moving_direction == MovingDirection.UP
     assert spaceship.shots_count == shots_before_input + 1
-    assert spaceship.rect.x == start_x - 1
-    assert spaceship.moving_direction == MovingDirection.LEFT
+
+
+def test_cheats_on_off(game):
+    game.get_inputs([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_y),
+                     pygame.event.Event(pygame.KEYDOWN, key=pygame.K_u),
+                     pygame.event.Event(pygame.KEYDOWN, key=pygame.K_i)])
+    assert game.cheats_flag is True
+    game.get_inputs([pygame.event.Event(pygame.KEYDOWN, key=pygame.K_h),
+                     pygame.event.Event(pygame.KEYDOWN, key=pygame.K_j),
+                     pygame.event.Event(pygame.KEYDOWN, key=pygame.K_k)])
+    assert game.cheats_flag is False
+
